@@ -1,0 +1,117 @@
+import itertools
+
+
+def apriori(tdb, minsupport):
+    mincount = len(tdb) * minsupport
+    frequent_itemsets = []
+
+    l_1 = {}
+    for itemset in tdb:
+        for item in itemset:  # 每个itemset元组作为字典的key，每次对key做排序更好
+            if (item, ) in l_1:
+                l_1[(item, )] = l_1[(item, )] + 1
+            else:
+                l_1[(item, )] = 1
+    for key in list(l_1):
+        if l_1[key] < mincount:
+            del l_1[key]
+        else:
+            l_1[key] = l_1[key] / len(tdb)
+    frequent_itemsets.append(l_1)
+
+    # 从 l_k-1 得到c_k，然后选出l_k
+    k = 2
+    l_k_1 = l_1
+    while len(l_k_1) > 1:
+        l_k = {}
+        c_k = apriori_gen(l_k_1, k)
+
+        for i in c_k:
+            for itemset in tdb:
+                if set(i).issubset(set(itemset)):
+                    if i in l_k:
+                        l_k[i] = l_k[i] + 1
+                    else:
+                        l_k[i] = 1
+
+        # 不能在迭代遍历的同时增删元素
+        for key in list(l_k):
+            if l_k[key] < mincount:
+                del l_k[key]
+            else:
+                l_k[key] = l_k[key] / len(tdb)
+        frequent_itemsets.append(l_k)
+
+        l_k_1 = l_k
+        k = k + 1
+
+    return frequent_itemsets
+
+
+def apriori_gen(l_k_1, k):
+    single_item_set = set()
+    for key in l_k_1:  # key是一个元组，从元组中选出单个元素
+        for item in key:
+            single_item_set.add(item)
+
+    # 单个元素组合成候选项目集
+    c_k = list(itertools.combinations(single_item_set, k))
+
+    # 剪枝操作
+    for mytuple in c_k[:]:
+        for mylist in getSublist(mytuple):
+            if len(mylist) == k-1:  # 获取固定长度的非空真子集
+                if tuple(mylist) not in l_k_1:  # 子集不在之前求出的频繁项目集中
+                    c_k.remove(mytuple)
+                    break
+
+    return c_k
+
+
+def getSublist(items):
+    n = len(items)
+    sublist = []
+    for i in range(2 ** n):  # 子集个数，每循环一次一个子集
+        combo = []
+        for j in range(n):  # 用来判断二进制下标为j的位置数是否为1
+            if(i >> j) % 2:
+                combo.append(items[j])
+        if len(combo) > 0 and len(combo) < len(items):  # 获取非空真子集
+            sublist.append(combo)
+    return sublist
+
+
+def maxFrequentItem(frequent_itemsets):
+    maxFrequent = []
+    for i in range(len(frequent_itemsets)):  # k项频繁集
+        itemset = frequent_itemsets[i]
+        for key1 in itemset:  # 判断每个频繁集是否是其他频繁集的子集
+            flag = 1
+
+            for j in range(i + 1, len(frequent_itemsets)):
+                for key2 in frequent_itemsets[j]:
+                    if set(key1).issubset(set(key2)):
+                        flag = 0
+                        break
+                if flag == 0:
+                    break
+
+            if flag == 1:
+                maxFrequent.append({key1: itemset[key1]})
+
+    return maxFrequent
+
+
+if __name__ == '__main__':
+    tdb = [
+            ['A', 'B', 'C', 'D'],
+            ['B', 'C', 'E'],
+            ['A', 'B', 'C', 'E'],
+            ['B', 'D', 'E'],
+            ['A', 'B', 'C', 'D']]
+
+    frequent = apriori(tdb, 0.4)
+    for i in frequent:
+        print(i)
+
+    # maxFrequent = maxFrequentItem(frequent)
