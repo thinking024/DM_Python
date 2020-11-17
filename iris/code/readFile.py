@@ -1,4 +1,4 @@
-file = open('data\\iris.data', 'r+')
+file = open('iris\\data\\iris.data', 'r+')
 sepal_length = []  # 花萼长度
 sepal_width = []  # 花萼宽度
 petal_length = []  # 花瓣长度

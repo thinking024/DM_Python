@@ -10,11 +10,11 @@ data = pd.DataFrame({
     'petal_width': f.petal_width
 })
 # print(data)
+print(data.describe())
+
 data.boxplot()  # pandas绘图
 # plt.boxplot(x=data.values, labels=data.columns)
 plt.show()
-
-print(data.describe())
 
 # print(max(f.sepal_length) - min(f.sepal_length))
 
