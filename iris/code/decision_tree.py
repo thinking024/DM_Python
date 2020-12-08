@@ -3,8 +3,6 @@ from sklearn import tree
 from sklearn import decomposition as dp
 from sklearn.model_selection import train_test_split, cross_val_score  # 划分数据 交叉验证
 import matplotlib.pyplot as plt
-
-
 def cross_validation(data, target):
     train_X, test_X, train_y, test_y = train_test_split(data, target, test_size=0.2, random_state=3)
 
@@ -31,10 +29,8 @@ def cross_validation(data, target):
 
 if __name__ == '__main__':
     iris = load_iris()
-    data = iris.data
-    target = iris.target
-    features = iris.feature_names
-    classes = iris.target_names
+    data = iris['data']
+    target = iris['target']
 
     pca = dp.PCA(n_components=0.95)
     data_pca = pca.fit_transform(data)

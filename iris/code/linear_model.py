@@ -1,6 +1,6 @@
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
-from sklearn import decomposition as dp
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.model_selection import train_test_split, cross_val_score  # 划分数据 交叉验证
 
 
@@ -23,17 +23,15 @@ if __name__ == '__main__':
     data = iris['data']
     target = iris['target']
 
-    # data = scale(data)
-
-    pca = dp.PCA(n_components=0.95)
-    data_pca = pca.fit_transform(data)
+    lda = LinearDiscriminantAnalysis(n_components=0.95)
+    data_lda = lda.fit_transform(data, target)
 
     clf = LogisticRegression(max_iter=500)
     clf = clf.fit(data, target)
     score = cross_val_score(clf, data, target, cv=10, scoring='accuracy')
     print(score.mean())
 
-    clf_pca = LogisticRegression(max_iter=500)
-    clf_pca = clf.fit(data_pca, target)
-    score_pca = cross_val_score(clf_pca, data_pca, target, cv=10, scoring='accuracy')
-    print(score_pca.mean())
+    clf_lda = LogisticRegression(max_iter=500)
+    clf_lda = clf.fit(data_lda, target)
+    score_lda = cross_val_score(clf_lda, data_lda, target, cv=10, scoring='accuracy')
+    print(score_lda.mean())

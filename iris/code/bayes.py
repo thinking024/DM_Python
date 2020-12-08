@@ -19,15 +19,23 @@ def cross_validation(data, target):
 
 
 if __name__ == '__main__':
-    iris = load_iris()
-    data = iris.data
-    target = iris.target
-    features = iris.feature_names
-    classes = iris.target_names
 
-    # 使用pca后似乎过拟合
+    # 朴素贝叶斯适合各项独立的属性
+    iris = load_iris()
+    data = iris['data']
+    target = iris['target']
+
     pca = dp.PCA(n_components=0.95)
     data_pca = pca.fit_transform(data)
 
-    cross_validation(data, target)
-    cross_validation(data_pca, target)
+    clf = GaussianNB()
+    clf = clf.fit(data, target)
+    # cv：选择每次测试折数  accuracy：评价指标是准确度,可以省略使用默认值
+    score = cross_val_score(clf, data, target, cv=10, scoring='accuracy')
+    print(score.mean())
+
+    clf_pca = GaussianNB()
+    clf_pca = clf.fit(data_pca, target)
+    # cv：选择每次测试折数  accuracy：评价指标是准确度,可以省略使用默认值
+    score_pca = cross_val_score(clf_pca, data_pca, target, cv=10, scoring='accuracy')
+    print(score_pca.mean())
