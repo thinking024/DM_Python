@@ -8,7 +8,7 @@ def cross_validation(data, target):
 
     # tree.plot_tree(clf, feature_names=features, class_names=classes, filled=True)
     # plt.show()
-    max_depth_range = range(2, 8)
+    max_depth_range = range(2, 10)
     scores = []
 
     for max_depth in max_depth_range:
